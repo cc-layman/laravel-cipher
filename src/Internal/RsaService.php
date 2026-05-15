@@ -1,11 +1,18 @@
 <?php
 
-namespace Layman\LaravelCipher\Services;
+namespace Layman\LaravelCipher\Internal;
 
+use Layman\LaravelCipher\Config\Config;
 use RuntimeException;
 
-class RsaService extends Service
+class RsaService
 {
+    public function __construct(
+        protected Config $config,
+    ) {
+
+    }
+
     /**
      * 获取公钥内容
      *
@@ -13,7 +20,7 @@ class RsaService extends Service
      */
     public function getPublicKey(): string
     {
-        $path = $this->rsa['public_path'];
+        $path = $this->config->rsa->publicPath;
 
         if (empty($path) || !file_exists($path)) {
             throw new RuntimeException('RSA public key not found.');
@@ -35,7 +42,7 @@ class RsaService extends Service
      */
     private function getPrivateKey(): string
     {
-        $path = $this->rsa['private_path'];
+        $path = $this->config->rsa->privatePath;
 
         if (empty($path) || !file_exists($path)) {
             throw new RuntimeException('RSA private key not found.');
@@ -77,7 +84,7 @@ class RsaService extends Service
     {
         $bytes = intdiv($this->getKeyBits(), 8);
 
-        if ($this->rsa['padding'] === OPENSSL_PKCS1_OAEP_PADDING) {
+        if ($this->config->rsa->padding === OPENSSL_PKCS1_OAEP_PADDING) {
             return $bytes - 42;
         }
 
@@ -94,7 +101,7 @@ class RsaService extends Service
     public function encrypt(string $plaintext): string
     {
 
-        $success = openssl_public_encrypt($plaintext, $ciphertext, $this->getPublicKey(), $this->rsa['padding']);
+        $success = openssl_public_encrypt($plaintext, $ciphertext, $this->getPublicKey(), $this->config->rsa->padding);
 
         if (empty($success)) {
             throw new RuntimeException('RSA public encryption failed: '.openssl_error_string());
@@ -112,7 +119,7 @@ class RsaService extends Service
      */
     public function decrypt(string $ciphertext): string
     {
-        $success = openssl_private_decrypt(base64_decode($ciphertext), $plaintext, $this->getPrivateKey(), $this->rsa['padding']);
+        $success = openssl_private_decrypt(base64_decode($ciphertext), $plaintext, $this->getPrivateKey(), $this->config->rsa->padding);
 
         if (empty($success)) {
             throw new RuntimeException('RSA private decryption failed: '.openssl_error_string());
@@ -130,7 +137,7 @@ class RsaService extends Service
      */
     public function sign(array $data): string
     {
-        $success = openssl_sign(implode($this->signature['separator'], $data), $signature, $this->getPrivateKey(), $this->rsa['algo']);
+        $success = openssl_sign(implode($this->config->signature->separator, $data), $signature, $this->getPrivateKey(), $this->config->rsa->algo);
 
         if (empty($success)) {
             throw new RuntimeException('RSA signing failed: '.openssl_error_string());
@@ -148,8 +155,8 @@ class RsaService extends Service
     {
         $signature = $data['signature'];
         unset($data['signature']);
-        
-        $result = openssl_verify(implode($this->signature['separator'], $data), base64_decode($signature), $this->getPublicKey(), $this->rsa['algo']);
+
+        $result = openssl_verify(implode($this->config->signature->separator, $data), base64_decode($signature), $this->getPublicKey(), $this->config->rsa->algo);
 
         return $result === 1;
     }

@@ -1,6 +1,6 @@
 {
     "name": "layman/laravel-cipher",
-    "description": "RSA + AES 混合加密",
+    "description": "基于 AES-256-GCM + RSA 的 Laravel API 请求与响应加密扩展包",
     "type": "library",
     "license": "MIT",
     "autoload": {

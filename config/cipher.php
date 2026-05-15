@@ -1,5 +1,24 @@
 <?php
 return [
+    
+    /*
+    |--------------------------------------------------------------------------
+    | AES 配置
+    |--------------------------------------------------------------------------
+    | cipher            对称加密算法
+    | options           加解返回数据格式
+    | key_length        key长度
+    | iv_length         iv长度
+    |
+    */
+
+    'aes' => [
+        'auth'       => 'aes-256-gcm',
+        'options'    => OPENSSL_RAW_DATA,
+        'key_length' => 32,
+        'iv_length'  => 12,
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | RSA 配置
@@ -18,24 +37,6 @@ return [
         'public_path'    => storage_path('app/ciphers/public.pem'),
         'padding'        => OPENSSL_PKCS1_OAEP_PADDING,
         'algo'           => OPENSSL_ALGO_SHA256,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | SA 配置
-    |--------------------------------------------------------------------------
-    | cipher            对称加密算法
-    | options           加解返回数据格式
-    | key_length        key长度
-    | iv_length         iv长度
-    |
-    */
-
-    'aes' => [
-        'auth'       => 'aes-256-gcm',
-        'options'    => OPENSSL_RAW_DATA,
-        'key_length' => 32,
-        'iv_length'  => 12,
     ],
 
     /*

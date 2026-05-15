@@ -4,16 +4,20 @@ namespace Layman\LaravelCipher;
 
 use Illuminate\Support\ServiceProvider;
 use Layman\LaravelCipher\Commands\CipherCommand;
-use Layman\LaravelCipher\Services\CipherService;
+use Layman\LaravelCipher\Config\Config;
+use Layman\LaravelCipher\Support\CipherSupport;
 
 class CipherServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/cipher.php', 'cipher');
+        $this->app->singleton(Config::class, function () {
+            return Config::fromArray(config('cipher', []));
+        });
         // 注册 Facade 对应的服务名称
         $this->app->singleton('cipher', function ($app) {
-            return $app->make(CipherService::class);
+            return $app->make(CipherSupport::class);
         });
     }
 

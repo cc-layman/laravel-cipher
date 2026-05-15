@@ -1,19 +1,24 @@
 <?php
 
-namespace Layman\LaravelCipher\Services;
+namespace Layman\LaravelCipher\Support;
 
 use Illuminate\Support\Str;
+use Layman\LaravelCipher\Config\Config;
 use Layman\LaravelCipher\Contracts\CipherInterface;
+use Layman\LaravelCipher\Internal\AesService;
+use Layman\LaravelCipher\Internal\ReplayService;
+use Layman\LaravelCipher\Internal\RsaService;
 use RuntimeException;
 
-class CipherService extends Service implements CipherInterface
+class CipherSupport implements CipherInterface
 {
     public function __construct(
         protected AesService $aesService,
         protected RsaService $rsaService,
         protected ReplayService $replayService,
+        protected Config $config,
     ) {
-        parent::__construct();
+
     }
 
     /**
@@ -32,25 +37,25 @@ class CipherService extends Service implements CipherInterface
         $params = $this->aesService->encrypt($plaintext);
 
         $meta = [
-            'key'       => base64_encode($params['key']),
-            'iv'        => base64_encode($params['iv']),
+            'key'       => $params['key'],
+            'iv'        => $params['iv'],
             'timestamp' => time(),
             'nonce'     => Str::uuid(),
         ];
 
-        $metaJson = json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $meta = json_encode($meta, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-        if ($metaJson === false) {
+        if ($meta === false) {
             throw new RuntimeException('Meta JSON encode failed.');
         }
 
         $payload = [
             'data' => $params['ciphertext'],
             'tag'  => $params['tag'],
-            'meta' => $this->rsaService->encrypt($metaJson),
+            'meta' => $this->rsaService->encrypt($meta),
         ];
 
-        if ($this->signature['enabled']) {
+        if ($this->config->signature->enabled) {
             $payload['signature'] = $this->rsaService->sign($payload);
         }
 
@@ -73,7 +78,7 @@ class CipherService extends Service implements CipherInterface
         }
 
         // 1. 验证签名
-        if ($this->signature['enabled'] && !empty($data['signature'])) {
+        if ($this->config->signature->enabled && !empty($data['signature'])) {
             if (!$this->rsaService->verify($data)) {
                 throw new RuntimeException('Invalid signature.');
             }
@@ -97,7 +102,7 @@ class CipherService extends Service implements CipherInterface
         $this->replayService->validate((int)$meta['timestamp']);
 
         // 4. AES-GCM 解密
-        $plaintext = $this->aesService->decrypt(base64_decode($data['data']), base64_decode($meta['key']), base64_decode($meta['iv']), base64_decode($data['tag']));
+        $plaintext = $this->aesService->decrypt($data['data'], $meta['key'], $meta['iv'], $data['tag']);
 
         // 5. JSON 解码
         $payload = json_decode($plaintext, true);

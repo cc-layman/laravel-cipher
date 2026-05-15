@@ -1,11 +1,18 @@
 <?php
 
-namespace Layman\LaravelCipher\Services;
+namespace Layman\LaravelCipher\Internal;
 
+use Layman\LaravelCipher\Config\Config;
 use RuntimeException;
 
-class AesService extends Service
+class AesService
 {
+    public function __construct(
+        protected Config $config,
+    ) {
+
+    }
+
     /**
      * 生成随机 AES Key
      *
@@ -13,7 +20,7 @@ class AesService extends Service
      */
     private function generateKey(): string
     {
-        return random_bytes($this->aes['key_length']);
+        return random_bytes($this->config->aes->keyLength);
     }
 
     /**
@@ -23,7 +30,7 @@ class AesService extends Service
      */
     private function generateIv(): string
     {
-        return random_bytes($this->aes['iv_length']);
+        return random_bytes($this->config->aes->ivLength);
     }
 
     /**
@@ -39,14 +46,13 @@ class AesService extends Service
         $iv  = $this->generateIv();
         $tag = '';
 
-        $ciphertext = openssl_encrypt($plaintext, $this->aes['auth'], $key, $this->aes['options'], $iv, $tag);
+        $ciphertext = openssl_encrypt($plaintext, $this->config->aes->auth, $key, $this->config->aes->options, $iv, $tag);
         if ($ciphertext === false) {
             throw new RuntimeException('AES encryption failed.');
         }
-
         return [
-            'key'        => $key,
-            'iv'         => $iv,
+            'key'        => base64_encode($key),
+            'iv'         => base64_encode($iv),
             'tag'        => base64_encode($tag),
             'ciphertext' => base64_encode($ciphertext),
         ];
@@ -62,7 +68,7 @@ class AesService extends Service
      */
     public function decrypt(string $ciphertext, string $key, string $iv, string $tag): string
     {
-        $plaintext = openssl_decrypt($ciphertext, $this->aes['auth'], $key, $this->aes['options'], $iv, $tag);
+        $plaintext = openssl_decrypt(base64_decode($ciphertext), $this->config->aes->auth, base64_decode($key), $this->config->aes->options, base64_decode($iv), base64_decode($tag));
 
         if ($plaintext === false) {
             throw new RuntimeException('AES decryption failed or authentication tag verification failed.');

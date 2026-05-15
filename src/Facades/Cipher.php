@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array sign(array $data)
  * @method static bool verify(array $data)
  *
- * @see \Layman\LaravelCipher\Services\CipherService
+ * @see \Layman\LaravelCipher\Support\CipherSupport
  */
 class Cipher extends Facade
 {

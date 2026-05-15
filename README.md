@@ -5,6 +5,7 @@
 ## 设计目标
 
 该扩展包主要解决以下问题：
+
 - API 请求参数加密
 - API 响应数据加密
 - 请求完整性校验
@@ -20,10 +21,10 @@
 
 ```json
 {
-  "data": "Base64(AES-GCM Ciphertext)",
-  "tag": "Base64(GCM Tag)",
-  "meta": "Base64(RSA(key, iv, timestamp, nonce))",
-  "signature": "可选"
+    "data": "Base64(AES-GCM Ciphertext)",
+    "tag": "Base64(GCM Tag)",
+    "meta": "Base64(RSA(key, iv, timestamp, nonce))",
+    "signature": "可选"
 }
 ```
 
@@ -31,13 +32,12 @@
 
 ```json
 {
-  "key": "base64(aesKey)",
-  "iv": "base64(iv)",
-  "timestamp": 1710000000,
-  "nonce": "uuid"
+    "key": "base64(aesKey)",
+    "iv": "base64(iv)",
+    "timestamp": 1710000000,
+    "nonce": "uuid"
 }
 ```
-
 
 ## 目录结构
 
@@ -53,14 +53,18 @@ laravel-cipher/
 │   │   └── Cipher.php
 │   ├── Commands/
 │   │   └── CipherCommand.php
+│   ├── Config/
+│   │   ├── AesConfig.php
+│   │   ├── Config.php
+│   │   ├── ReplayConfig.php
+│   │   ├── RsaConfig.php
+│   │   ├── SignatureConfig.php
 │   ├── Contracts/
 │   │   └── CipherInterface.php
-│   ├── Services/
-│   │   ├── CipherService.php
-│   │   ├── RsaService.php
+│   ├── Internal/
 │   │   ├── AesService.php
+│   │   ├── RsaService.php
 │   │   ├── ReplayService.php
-│   │   ├── Service.php
 └── tests/
 ```
 
@@ -75,10 +79,10 @@ composer require layman/laravel-cipher
 php artisan vendor:publish --tag=cipher
 ```
 
-### 生成密钥
+### 生成opssl密钥对
 
 ```bash
-php artisan cipher:generate
+php artisan cipher:secret
 ```
 
 ### 加密

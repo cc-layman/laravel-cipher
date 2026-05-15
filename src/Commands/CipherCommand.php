@@ -4,6 +4,7 @@ namespace Layman\LaravelCipher\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Layman\LaravelCipher\Config\Config;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class CipherCommand extends Command
@@ -13,7 +14,7 @@ class CipherCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'cipher:generate {bits=2048}';
+    protected $signature = 'cipher:secret {bits=2048}';
 
     /**
      * The console command description.
@@ -27,11 +28,11 @@ class CipherCommand extends Command
      */
     public function handle(): void
     {
-        $config = config('cipher');
+        $config = Config::fromArray(config('cipher', []));
 
-        $dirPermission = $config['rsa']['dir_permission'];
-        $privatePath   = $config['rsa']['private_path'];
-        $publicPath    = $config['rsa']['public_path'];
+        $dirPermission = $config->rsa->dirPermission;
+        $privatePath   = $config->rsa->privatePath;
+        $publicPath    = $config->rsa->publicPath;
 
         $privateDir = dirname($privatePath);
         $publicDir  = dirname($publicPath);
