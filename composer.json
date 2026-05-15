@@ -3,6 +3,17 @@
     "description": "基于 AES-256-GCM + RSA 的 Laravel API 请求与响应加密扩展包",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "laravel",
+        "encryption",
+        "aes",
+        "rsa",
+        "cipher"
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": ">=9.0"
+    },
     "autoload": {
         "psr-4": {
             "Layman\\LaravelCipher\\": "src/"
@@ -14,7 +25,6 @@
             "email": "892349689@qq.com"
         }
     ],
-    "require": {},
     "extra": {
         "laravel": {
             "providers": [
