@@ -1,0 +1,28 @@
+{
+    "name": "layman/laravel-cipher",
+    "description": "RSA + AES 混合加密",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Layman\\LaravelCipher\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "layman",
+            "email": "892349689@qq.com"
+        }
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Layman\\LaravelCipher\\CipherServiceProvider"
+            ],
+            "aliases": {
+                "Cipher": "Layman\\LaravelCipher\\Facades\\Cipher"
+            }
+        }
+    }
+}
