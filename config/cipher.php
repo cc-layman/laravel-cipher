@@ -1,12 +1,12 @@
 <?php
 return [
-    
+
     /*
     |--------------------------------------------------------------------------
     | AES 配置
     |--------------------------------------------------------------------------
     | cipher            对称加密算法
-    | options           加解返回数据格式
+    | options           加解返回数据格式 [OPENSSL_RAW_DATA]
     | key_length        key长度
     | iv_length         iv长度
     |
@@ -26,8 +26,8 @@ return [
     | dir_permission    目录权限
     | private_path      私钥存放路径
     | public_path       公钥存放路径
-    | padding           RSA 加密算法模式
-    | algo              加密方式
+    | padding           RSA 加密算法模式 [OPENSSL_PKCS1_OAEP_PADDING]
+    | algo              加密方式 [OPENSSL_ALGO_MD5, OPENSSL_ALGO_SHA256,OPENSSL_ALGO_SHA512]
     |
     */
 

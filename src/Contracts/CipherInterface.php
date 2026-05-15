@@ -38,4 +38,11 @@ interface CipherInterface
      * @return bool
      */
     public function verify(array $data): bool;
+
+    /**
+     * 获取配置
+     *
+     * @return array
+     */
+    public function config(): array;
 }

@@ -151,4 +151,18 @@ class CipherSupport implements CipherInterface
 
         return $this->rsaService->verify($data);
     }
+
+    public function config(): array
+    {
+        $config = $this->config->toArrayRecursive($this->config);
+
+        $config['aes']['options']   = $this->config->options($this->config->aes->options);
+        $config['rsa']['padding']   = $this->config->padding($this->config->rsa->padding);
+        $config['rsa']['algo']      = $this->config->algo($this->config->rsa->algo);
+        $config['rsa']['publicKey'] = $this->rsaService->getPublicKey();
+
+        unset($config['rsa']['dirPermission'], $config['rsa']['privatePath'], $config['rsa']['publicPath']);
+        
+        return $config;
+    }
 }
