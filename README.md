@@ -79,7 +79,7 @@ composer require layman/laravel-cipher
 php artisan vendor:publish --tag=cipher
 ```
 
-### 生成opssl密钥对
+### 生成openssl密钥对
 
 ```bash
 php artisan cipher:secret
